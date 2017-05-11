@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
-
-from fabric.api import run, env
+from fabric.api import run, env, put, settings
 from fabric.contrib.files import append, contains, exists
 
 
@@ -18,6 +16,14 @@ def update_ssh_authorized_keys():
         return
     append(auth_key_path,
             "\n".join( new_keys))
+
+def update_deployer_keys():
+    '''
+    update(replace) deployer user authorized_keys file with admin_ssh_keys
+    '''
+    auth_key_path = "/home/pyconkr/.ssh/authorized_keys"
+    with settings(sudo_user='pyconkr'):
+        put('admin_ssh_keys', auth_key_path, mode=0600)
 
 def add_nginx_repo():
     nginx_config_path = "/etc/yum.repos.d/nginx.repo"
